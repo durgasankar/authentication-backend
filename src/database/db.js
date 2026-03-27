@@ -3,13 +3,16 @@ import { MongoClient } from "mongodb";
 let client;
 
 export const initializeDbConnection = async () => {
-    client = await MongoClient.connect('mongodb://localhost:27017', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
-}
+    try {
+        client = new MongoClient("mongodb://localhost:27017");
+        await client.connect();
+        console.log("MongoDB connected");
+    } catch (err) {
+        console.error("Failed to connect to MongoDB:", err);
+        process.exit(1);
+    }
+};
 
-export const getDbConnection = dbName => {
-    const db = client.db(dbName);
-    return db;
-}
+export const getDbConnection = (dbName) => {
+    return client.db(dbName);
+};
