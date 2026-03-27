@@ -13,6 +13,10 @@ app.use(express.json());
 
 // Add all the routes to our Express server
 // exported from routes/index.js
+app.use((req, res, next) => {
+    console.log("Incoming:", req.method, req.url);
+    next();
+});
 routes.forEach(route => {
     app[route.method](route.path, route.handler);
 })
