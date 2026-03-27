@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { getDbConnection } from "../database/db";
 
 export const signUpRoute = {
-    path: 'signup',
+    path: '/api/signup',
     method: 'post',
     handler: async (request, response) => {
         const { email, password } = request.body;
@@ -11,10 +11,10 @@ export const signUpRoute = {
 
         const user = await db.collection('users').findOne({ email });
         if (user) {
-            response.sendStatus(409);
+            return response.sendStatus(409);
         }
 
-        const paswordHash = await bcrypt.hash(password, 10);
+        const passwordHash = await bcrypt.hash(password, 10);
         const startingInfo = {
             hairColor: '',
             favoriteFood: '',
@@ -22,7 +22,7 @@ export const signUpRoute = {
         }
         const result = await db.collection('users').insertOne({
             email,
-            paswordHash,
+            passwordHash,
             info: startingInfo,
             isVerified: false
         });
@@ -36,7 +36,7 @@ export const signUpRoute = {
             expiresIn: '2d'
         }, (err, token) => {
             if (err) return response.status(500).send(err);
-            response.status(200).json({ token });
+            return response.status(200).json({ token });
         })
     }
 }
